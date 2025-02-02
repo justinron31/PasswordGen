@@ -1,69 +1,24 @@
-import { useState, useEffect } from "react";
 import { Copy, Eye, EyeOff, Moon, Sun, RefreshCw } from "lucide-react";
+import { usePasswordGenerator } from "./usePasswordGenerator";
+import AnimatedPassword from "./AnimatedPassword";
 
 function App() {
-  const [password, setPassword] = useState("");
-  const [length, setLength] = useState(16);
-  const [showPassword, setShowPassword] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
-  const [copySuccess, setCopySuccess] = useState(false);
-  const [showTooltip, setShowTooltip] = useState("");
-
-  useEffect(() => {
-    document.documentElement.classList.add("dark");
-  }, []);
-
-  const generatePassword = () => {
-    const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
-    const numberChars = "0123456789";
-    const specialChars = "!@#$%^&*()_+-=[]{}|;:,.<>?";
-
-    let result = "";
-    result += uppercaseChars.charAt(
-      Math.floor(Math.random() * uppercaseChars.length)
-    );
-    result += lowercaseChars.charAt(
-      Math.floor(Math.random() * lowercaseChars.length)
-    );
-    result += numberChars.charAt(
-      Math.floor(Math.random() * numberChars.length)
-    );
-    result += specialChars.charAt(
-      Math.floor(Math.random() * specialChars.length)
-    );
-
-    const allChars =
-      uppercaseChars + lowercaseChars + numberChars + specialChars;
-    for (let i = 4; i < length; i++) {
-      result += allChars.charAt(Math.floor(Math.random() * allChars.length));
-    }
-
-    result = result
-      .split("")
-      .sort(() => Math.random() - 0.5)
-      .join("");
-    setPassword(result);
-  };
-
-  useEffect(() => {
-    generatePassword();
-  }, [length]);
-
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(password);
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy password:", err);
-    }
-  };
-
-  const toggleTheme = () => {
-    setDarkMode(!darkMode);
-    document.documentElement.classList.toggle("dark");
-  };
+  const {
+    password,
+    length,
+    setLength,
+    showPassword,
+    setShowPassword,
+    darkMode,
+    copySuccess,
+    showTooltip,
+    setShowTooltip,
+    charTypes,
+    generatePassword,
+    toggleCharType,
+    copyToClipboard,
+    toggleTheme,
+  } = usePasswordGenerator();
 
   return (
     <div
@@ -89,7 +44,7 @@ function App() {
                   : "from-blue-600 to-purple-600"
               } bg-clip-text text-transparent`}
             >
-              Password Generator
+              PassPalette Gen
             </h1>
             <div className="relative">
               <button
@@ -105,7 +60,7 @@ function App() {
                 {darkMode ? <Sun size={20} /> : <Moon size={20} />}
               </button>
               {showTooltip === "theme" && (
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg text-nowrap">
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg text-nowrap hidden sm:block">
                   Toggle theme
                   <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
                 </div>
@@ -119,13 +74,11 @@ function App() {
             }`}
           >
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <span
-                className={`font-mono text-lg sm:text-xl break-all ${
-                  showPassword ? "" : "blur-md select-none"
-                } ${darkMode ? "text-gray-200" : "text-gray-800"}`}
-              >
-                {password}
-              </span>
+              <AnimatedPassword
+                password={password}
+                showPassword={showPassword}
+                darkMode={darkMode}
+              />
               <div className="flex gap-2 sm:gap-3">
                 <div className="relative">
                   <button
@@ -141,7 +94,7 @@ function App() {
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                   {showTooltip === "visibility" && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg whitespace-nowrap">
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg whitespace-nowrap hidden sm:block">
                       {showPassword ? "Hide password" : "Show password"}
                       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
                     </div>
@@ -161,7 +114,7 @@ function App() {
                     <RefreshCw size={18} />
                   </button>
                   {showTooltip === "generate" && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg text-nowrap">
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg text-nowrap hidden sm:block">
                       Generate new
                       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
                     </div>
@@ -183,13 +136,81 @@ function App() {
                     <Copy size={18} />
                   </button>
                   {showTooltip === "copy" && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg text-nowrap">
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg text-nowrap hidden sm:block">
                       {copySuccess ? "Copied!" : "Copy to clipboard"}
                       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
                     </div>
                   )}
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div className="mb-6 sm:mb-8">
+            <label
+              className={`block text-sm sm:text-base font-medium mb-3 transition-colors duration-300 ${
+                darkMode ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              Character Types
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => toggleCharType("uppercase")}
+                className={`p-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                  charTypes.uppercase
+                    ? darkMode
+                      ? "bg-blue-500/20 text-blue-400 ring-2 ring-blue-500/40"
+                      : "bg-blue-100 text-blue-700 ring-2 ring-blue-500/40"
+                    : darkMode
+                    ? "bg-gray-700 text-gray-400"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                Uppercase (A-Z)
+              </button>
+              <button
+                onClick={() => toggleCharType("lowercase")}
+                className={`p-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                  charTypes.lowercase
+                    ? darkMode
+                      ? "bg-green-500/20 text-green-400 ring-2 ring-green-500/40"
+                      : "bg-green-100 text-green-700 ring-2 ring-green-500/40"
+                    : darkMode
+                    ? "bg-gray-700 text-gray-400"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                Lowercase (a-z)
+              </button>
+              <button
+                onClick={() => toggleCharType("numbers")}
+                className={`p-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                  charTypes.numbers
+                    ? darkMode
+                      ? "bg-purple-500/20 text-purple-400 ring-2 ring-purple-500/40"
+                      : "bg-purple-100 text-purple-700 ring-2 ring-purple-500/40"
+                    : darkMode
+                    ? "bg-gray-700 text-gray-400"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                Numbers (0-9)
+              </button>
+              <button
+                onClick={() => toggleCharType("special")}
+                className={`p-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                  charTypes.special
+                    ? darkMode
+                      ? "bg-orange-500/20 text-orange-400 ring-2 ring-orange-500/40"
+                      : "bg-orange-100 text-orange-700 ring-2 ring-orange-500/40"
+                    : darkMode
+                    ? "bg-gray-700 text-gray-400"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                Special (!@#$%^&*)
+              </button>
             </div>
           </div>
 
@@ -239,6 +260,9 @@ function App() {
                 }
                 input[type='range']::-webkit-slider-thumb:hover {
                   transform: scale(1.1);
+                  box-shadow: 0;
+                  input[type='range']::-webkit-slider-thumb:hover {
+                  transform: scale(1.1);
                   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
                 }
                 input[type='range']::-moz-range-thumb {
@@ -280,26 +304,32 @@ function App() {
               darkMode ? "text-gray-400" : "text-gray-600"
             }`}
           >
-            <p className="font-medium">
-              Your password is guaranteed to contain:
-            </p>
+            <p className="font-medium">Your password will contain:</p>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              <li className="flex items-center">
-                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                Uppercase letters (A-Z)
-              </li>
-              <li className="flex items-center">
-                <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                Lowercase letters (a-z)
-              </li>
-              <li className="flex items-center">
-                <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-                Numbers (0-9)
-              </li>
-              <li className="flex items-center">
-                <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
-                Special characters (!@#$%^&*)
-              </li>
+              {charTypes.uppercase && (
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                  Uppercase letters (A-Z)
+                </li>
+              )}
+              {charTypes.lowercase && (
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                  Lowercase letters (a-z)
+                </li>
+              )}
+              {charTypes.numbers && (
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                  Numbers (0-9)
+                </li>
+              )}
+              {charTypes.special && (
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+                  Special characters (!@#$%^&*)
+                </li>
+              )}
             </ul>
           </div>
         </div>
