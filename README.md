@@ -13,6 +13,6 @@ An interactive password generator app that creates a strong password with animat
 
 ## Tech Stack
 
-- **Frontend**: React, TypeScript, Tailwind CSS
+- **Frontend**: React, JavaScript, Tailwind CSS
 - **Animations**: React State and Effects
 - **Design**: Tailwind CSS for styling and responsiveness
