@@ -1,339 +1,249 @@
-import { Copy, Eye, EyeOff, Moon, Sun, RefreshCw } from "lucide-react";
+import { Copy, Moon, Sun, KeyRound } from "lucide-react";
 import { usePasswordGenerator } from "./usePasswordGenerator";
-import AnimatedPassword from "./AnimatedPassword";
+import PasswordStrengthMeter from "./components/PasswordStrengthMeter";
+
 
 function App() {
   const {
     password,
     length,
     setLength,
-    showPassword,
-    setShowPassword,
+    // showPassword, // We'll always show password in this new design, maybe just mask it? Nah, generators usually show it.
     darkMode,
     copySuccess,
-    showTooltip,
-    setShowTooltip,
     charTypes,
     generatePassword,
     toggleCharType,
     copyToClipboard,
     toggleTheme,
+    mode,
+    setMode,
+    wordCount,
+    setWordCount,
+    separator,
+    setSeparator,
+    capitalize,
+    setCapitalize,
+    includeNumber,
+    setIncludeNumber,
+
+    strength
   } = usePasswordGenerator();
 
   return (
-    <div
-      className={`min-h-screen flex flex-col items-center justify-center transition-colors duration-300 ${
-        darkMode
-          ? "dark bg-gray-900"
-          : "bg-gradient-to-br from-gray-50 to-gray-100"
-      }`}
-    >
-      <div className="w-full max-w-xl px-4 py-4 sm:py-8">
-        <div
-          className={`rounded-2xl shadow-2xl backdrop-blur-sm p-4 sm:p-6 md:p-8 transition-all duration-300 ${
-            darkMode
-              ? "bg-gray-800/90 shadow-gray-900/30"
-              : "bg-white/90 shadow-gray-200/50"
-          }`}
-        >
-          <div className="flex justify-between items-center mb-6 sm:mb-8">
-            <h1
-              className={`text-2xl sm:text-3xl font-bold bg-gradient-to-r ${
-                darkMode
-                  ? "from-blue-400 to-purple-400"
-                  : "from-blue-600 to-purple-600"
-              } bg-clip-text text-transparent`}
-            >
-              PassPalette Gen
-            </h1>
-            <div className="relative">
-              <button
-                onClick={toggleTheme}
-                onMouseEnter={() => setShowTooltip("theme")}
-                onMouseLeave={() => setShowTooltip("")}
-                className={`p-2 sm:p-3 rounded-xl transition-all duration-300 ${
-                  darkMode
-                    ? "bg-gray-700 hover:bg-gray-600 text-gray-300"
-                    : "bg-gray-100 hover:bg-gray-200 text-gray-600"
-                }`}
-              >
-                {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
-              {showTooltip === "theme" && (
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg text-nowrap hidden sm:block">
-                  Toggle theme
-                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
-                </div>
-              )}
-            </div>
-          </div>
+    <div className={`min-h-screen font-['Outfit'] transition-colors duration-300 flex items-center justify-center p-4 ${
+        darkMode ? "bg-slate-950 text-slate-100" : "bg-gray-50 text-gray-900"
+    }`}>
+        <div className="w-full max-w-5xl flex flex-col md:flex-row items-start justify-center gap-6">
 
-          <div
-            className={`relative mb-6 sm:mb-8 p-4 sm:p-6 rounded-xl transition-all duration-300 ${
-              darkMode ? "bg-gray-700/50" : "bg-gray-50"
-            }`}
-          >
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <AnimatedPassword
-                password={password}
-                showPassword={showPassword}
-                darkMode={darkMode}
-              />
-              <div className="flex gap-2 sm:gap-3">
-                <div className="relative">
-                  <button
-                    onClick={() => setShowPassword(!showPassword)}
-                    onMouseEnter={() => setShowTooltip("visibility")}
-                    onMouseLeave={() => setShowTooltip("")}
-                    className={`p-2 sm:p-3 rounded-xl transition-all duration-300 ${
-                      darkMode
-                        ? "bg-gray-600 hover:bg-gray-500 text-gray-300"
-                        : "bg-gray-100 hover:bg-gray-200 text-gray-600"
-                    }`}
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                  {showTooltip === "visibility" && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg whitespace-nowrap hidden sm:block">
-                      {showPassword ? "Hide password" : "Show password"}
-                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
+            {/* Main Card */}
+            <div className={`flex-1 w-full rounded-3xl p-6 sm:p-10 shadow-2xl transition-all duration-300 ${
+                darkMode ? "bg-slate-900 border border-slate-800" : "bg-white border border-gray-100"
+            }`}>
+
+                {/* Header */}
+                <div className="flex justify-between items-center mb-10">
+                    <div className="flex items-center gap-3">
+                        <div className={`p-3 rounded-2xl ${darkMode ? "bg-indigo-500/10 text-indigo-400" : "bg-indigo-50 text-indigo-600"}`}>
+                            <KeyRound size={24} />
+                        </div>
+                        <div>
+                            <h1 className="text-xl font-bold tracking-tight">PassGen</h1>
+                            <p className={`text-sm ${darkMode ? "text-slate-400" : "text-gray-400"}`}>Secure & Premium</p>
+                        </div>
                     </div>
-                  )}
+                    <button
+                        onClick={toggleTheme}
+                        className={`p-3 rounded-2xl transition-all ${
+                            darkMode
+                            ? "bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700"
+                            : "bg-gray-100 text-gray-500 hover:text-gray-900 hover:bg-gray-200"
+                        }`}
+                    >
+                        {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+                    </button>
                 </div>
-                <div className="relative">
-                  <button
-                    onClick={generatePassword}
-                    onMouseEnter={() => setShowTooltip("generate")}
-                    onMouseLeave={() => setShowTooltip("")}
-                    className={`p-2 sm:p-3 rounded-xl transition-all duration-300 ${
-                      darkMode
-                        ? "bg-gray-600 hover:bg-gray-500 text-gray-300"
-                        : "bg-gray-100 hover:bg-gray-200 text-gray-600"
-                    }`}
-                  >
-                    <RefreshCw size={18} />
-                  </button>
-                  {showTooltip === "generate" && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg text-nowrap hidden sm:block">
-                      Generate new
-                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
+
+                {/* Display Area */}
+                <div className="relative mb-8 group">
+                    <div className={`w-full min-h-[5rem] flex items-center justify-center py-6 px-16 rounded-2xl text-center break-all transition-all border-2 border-dashed ${
+                        darkMode
+                        ? "bg-slate-950 border-slate-800 text-3xl font-mono text-white"
+                        : "bg-gray-50 border-gray-200 text-3xl font-mono text-gray-800"
+                    }`}>
+                        {password || <span className="text-gray-400 text-lg">Click generate...</span>}
                     </div>
-                  )}
-                </div>
-                <div className="relative">
-                  <button
-                    onClick={copyToClipboard}
-                    onMouseEnter={() => setShowTooltip("copy")}
-                    onMouseLeave={() => setShowTooltip("")}
-                    className={`p-2 sm:p-3 rounded-xl transition-all duration-300 ${
-                      copySuccess
-                        ? "bg-green-500 text-white hover:bg-green-600"
-                        : darkMode
-                        ? "bg-gray-600 hover:bg-gray-500 text-gray-300"
-                        : "bg-gray-100 hover:bg-gray-200 text-gray-600"
-                    }`}
-                  >
-                    <Copy size={18} />
-                  </button>
-                  {showTooltip === "copy" && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg text-nowrap hidden sm:block">
-                      {copySuccess ? "Copied!" : "Copy to clipboard"}
-                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
+
+                    <div className="absolute top-0 right-0 h-full flex items-center pr-2 opacity-0 group-hover:opacity-100 transition-opacity">
+
+                        <button
+                            onClick={() => copyToClipboard()}
+                            className={`p-3 rounded-xl transition-all ${
+                                copySuccess
+                                ? "bg-emerald-500 text-white"
+                                : darkMode ? "bg-slate-800 hover:bg-indigo-600 text-white" : "bg-white hover:bg-indigo-500 hover:text-white shadow-md text-gray-600"
+                            }`}
+                            title="Copy"
+                        >
+                            <Copy size={20} />
+                        </button>
                     </div>
-                  )}
                 </div>
-              </div>
-            </div>
-          </div>
 
-          <div className="mb-6 sm:mb-8">
-            <label
-              className={`block text-sm sm:text-base font-medium mb-3 transition-colors duration-300 ${
-                darkMode ? "text-gray-300" : "text-gray-700"
-              }`}
-            >
-              Character Types
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => toggleCharType("uppercase")}
-                className={`p-3 rounded-xl text-sm font-medium transition-all duration-300 ${
-                  charTypes.uppercase
-                    ? darkMode
-                      ? "bg-blue-500/20 text-blue-400 ring-2 ring-blue-500/40"
-                      : "bg-blue-100 text-blue-700 ring-2 ring-blue-500/40"
-                    : darkMode
-                    ? "bg-gray-700 text-gray-400"
-                    : "bg-gray-100 text-gray-500"
-                }`}
-              >
-                Uppercase (A-Z)
-              </button>
-              <button
-                onClick={() => toggleCharType("lowercase")}
-                className={`p-3 rounded-xl text-sm font-medium transition-all duration-300 ${
-                  charTypes.lowercase
-                    ? darkMode
-                      ? "bg-green-500/20 text-green-400 ring-2 ring-green-500/40"
-                      : "bg-green-100 text-green-700 ring-2 ring-green-500/40"
-                    : darkMode
-                    ? "bg-gray-700 text-gray-400"
-                    : "bg-gray-100 text-gray-500"
-                }`}
-              >
-                Lowercase (a-z)
-              </button>
-              <button
-                onClick={() => toggleCharType("numbers")}
-                className={`p-3 rounded-xl text-sm font-medium transition-all duration-300 ${
-                  charTypes.numbers
-                    ? darkMode
-                      ? "bg-purple-500/20 text-purple-400 ring-2 ring-purple-500/40"
-                      : "bg-purple-100 text-purple-700 ring-2 ring-purple-500/40"
-                    : darkMode
-                    ? "bg-gray-700 text-gray-400"
-                    : "bg-gray-100 text-gray-500"
-                }`}
-              >
-                Numbers (0-9)
-              </button>
-              <button
-                onClick={() => toggleCharType("special")}
-                className={`p-3 rounded-xl text-sm font-medium transition-all duration-300 ${
-                  charTypes.special
-                    ? darkMode
-                      ? "bg-orange-500/20 text-orange-400 ring-2 ring-orange-500/40"
-                      : "bg-orange-100 text-orange-700 ring-2 ring-orange-500/40"
-                    : darkMode
-                    ? "bg-gray-700 text-gray-400"
-                    : "bg-gray-100 text-gray-500"
-                }`}
-              >
-                Special (!@#$%^&*)
-              </button>
-            </div>
-          </div>
+                <PasswordStrengthMeter strength={strength} />
 
-          <div className="mb-6 sm:mb-8">
-            <div className="flex justify-between mb-3">
-              <label
-                className={`text-sm sm:text-base font-medium transition-colors duration-300 ${
-                  darkMode ? "text-gray-300" : "text-gray-700"
-                }`}
-              >
-                Password Length: {length}
-              </label>
-            </div>
-            <div className="relative py-4">
-              <input
-                type="range"
-                min="12"
-                max="32"
-                value={length}
-                onChange={(e) => setLength(parseInt(e.target.value))}
-                className={`w-full h-1 rounded-lg appearance-none cursor-pointer ${
-                  darkMode ? "bg-gray-700" : "bg-gray-200"
-                }`}
-                style={{
-                  background: `linear-gradient(to right,
-                    ${darkMode ? "#818cf8" : "#4f46e5"} 0%,
-                    ${darkMode ? "#818cf8" : "#4f46e5"} ${
-                    ((length - 12) / 20) * 100
-                  }%,
-                    ${darkMode ? "#374151" : "#e5e7eb"} ${
-                    ((length - 12) / 20) * 100
-                  }%,
-                    ${darkMode ? "#374151" : "#e5e7eb"} 100%)`,
-                }}
-              />
-              <style>{`
-                input[type='range']::-webkit-slider-thumb {
-                  -webkit-appearance: none;
-                  appearance: none;
-                  width: 20px;
-                  height: 20px;
-                  border-radius: 50%;
-                  background: ${darkMode ? "#818cf8" : "#4f46e5"};
-                  cursor: pointer;
-                  transition: all 0.2s ease-in-out;
-                  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-                }
-                input[type='range']::-webkit-slider-thumb:hover {
-                  transform: scale(1.1);
-                  box-shadow: 0;
-                  input[type='range']::-webkit-slider-thumb:hover {
-                  transform: scale(1.1);
-                  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-                }
-                input[type='range']::-moz-range-thumb {
-                  width: 20px;
-                  height: 20px;
-                  border: none;
-                  border-radius: 50%;
-                  background: ${darkMode ? "#818cf8" : "#4f46e5"};
-                  cursor: pointer;
-                  transition: all 0.2s ease-in-out;
-                  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-                }
-                input[type='range']::-moz-range-thumb:hover {
-                  transform: scale(1.1);
-                  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-                }
-              `}</style>
-            </div>
-            <div className="flex justify-between mt-2">
-              <span
-                className={`text-xs sm:text-sm transition-colors duration-300 ${
-                  darkMode ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                12
-              </span>
-              <span
-                className={`text-xs sm:text-sm transition-colors duration-300 ${
-                  darkMode ? "text-gray-400" : "text-gray-500"
-                }`}
-              >
-                32
-              </span>
-            </div>
-          </div>
+                {/* Controls */}
+                <div className="mt-10">
+                    {/* Tabs */}
+                    <div className={`flex p-1 rounded-xl mb-8 ${darkMode ? "bg-slate-800" : "bg-gray-100"}`}>
+                        <button
+                         onClick={() => setMode("random")}
+                         className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all ${
+                             mode === "random"
+                             ? (darkMode ? "bg-slate-700 text-white shadow-lg" : "bg-white text-gray-900 shadow-sm")
+                             : (darkMode ? "text-slate-400 hover:text-white" : "text-gray-500 hover:text-gray-900")
+                         }`}
+                        >
+                            Random Characters
+                        </button>
+                        <button
+                         onClick={() => setMode("passphrase")}
+                         className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all ${
+                             mode === "passphrase"
+                             ? (darkMode ? "bg-slate-700 text-white shadow-lg" : "bg-white text-gray-900 shadow-sm")
+                             : (darkMode ? "text-slate-400 hover:text-white" : "text-gray-500 hover:text-gray-900")
+                         }`}
+                        >
+                            Passphrase (Memorable)
+                        </button>
+                    </div>
 
-          <div
-            className={`space-y-3 text-xs sm:text-sm transition-colors duration-300 ${
-              darkMode ? "text-gray-400" : "text-gray-600"
-            }`}
-          >
-            <p className="font-medium">Your password will contain:</p>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {charTypes.uppercase && (
-                <li className="flex items-center">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                  Uppercase letters (A-Z)
-                </li>
-              )}
-              {charTypes.lowercase && (
-                <li className="flex items-center">
-                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                  Lowercase letters (a-z)
-                </li>
-              )}
-              {charTypes.numbers && (
-                <li className="flex items-center">
-                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-                  Numbers (0-9)
-                </li>
-              )}
-              {charTypes.special && (
-                <li className="flex items-center">
-                  <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
-                  Special characters (!@#$%^&*)
-                </li>
-              )}
-            </ul>
-          </div>
+                    {/* Settings */}
+                    <div className="space-y-6">
+                        {mode === "random" ? (
+                            <>
+                                <div>
+                                    <div className="flex justify-between mb-3">
+                                        <label className={`font-medium ${darkMode ? "text-slate-300" : "text-gray-700"}`}>Password Length</label>
+                                        <span className={`font-mono ${darkMode ? "text-indigo-400" : "text-indigo-600"}`}>{length}</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="8"
+                                        max="64"
+                                        value={length}
+                                        onChange={(e) => setLength(parseInt(e.target.value))}
+                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-indigo-500"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    {[
+                                        { id: 'uppercase', label: 'ABC Uppercase', state: charTypes.uppercase },
+                                        { id: 'lowercase', label: 'abc Lowercase', state: charTypes.lowercase },
+                                        { id: 'numbers', label: '123 Numbers', state: charTypes.numbers },
+                                        { id: 'special', label: '#$& Symbols', state: charTypes.special },
+                                    ].map((item) => (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => toggleCharType(item.id as any)}
+                                            className={`p-4 rounded-xl border text-left transition-all ${
+                                                item.state
+                                                ? (darkMode
+                                                    ? "bg-indigo-500/10 border-indigo-500/50 text-indigo-300"
+                                                    : "bg-indigo-50 border-indigo-200 text-indigo-700")
+                                                : (darkMode
+                                                    ? "bg-slate-800/50 border-slate-700 text-slate-500 hover:bg-slate-800"
+                                                    : "bg-white border-gray-200 text-gray-400 hover:bg-gray-50")
+                                            }`}
+                                        >
+                                            <div className="font-semibold text-sm">{item.label}</div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <div>
+                                    <div className="flex justify-between mb-3">
+                                        <label className={`font-medium ${darkMode ? "text-slate-300" : "text-gray-700"}`}>Word Count</label>
+                                        <span className={`font-mono ${darkMode ? "text-indigo-400" : "text-indigo-600"}`}>{wordCount}</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="3"
+                                        max="10"
+                                        value={wordCount}
+                                        onChange={(e) => setWordCount(parseInt(e.target.value))}
+                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-indigo-500"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className={`p-4 rounded-xl border flex items-center justify-between ${darkMode ? "bg-slate-800/50 border-slate-700" : "bg-white border-gray-200"}`}>
+                                        <span className={`text-sm font-medium ${darkMode ? "text-slate-300" : "text-gray-700"}`}>Separator</span>
+                                        <select
+                                            value={separator}
+                                            onChange={(e) => setSeparator(e.target.value)}
+                                            className={`bg-transparent border-none focus:ring-0 text-right font-mono font-bold cursor-pointer ${darkMode ? "text-indigo-400" : "text-indigo-600"}`}
+                                        >
+                                            <option value="-">-</option>
+                                            <option value=".">.</option>
+                                            <option value="_">_</option>
+                                            <option value=" ">Space</option>
+                                        </select>
+                                    </div>
+                                    <button
+                                        onClick={() => setCapitalize(!capitalize)}
+                                        className={`p-4 rounded-xl border text-left transition-all ${
+                                            capitalize
+                                            ? (darkMode
+                                                ? "bg-indigo-500/10 border-indigo-500/50 text-indigo-300"
+                                                : "bg-indigo-50 border-indigo-200 text-indigo-700")
+                                            : (darkMode
+                                                ? "bg-slate-800/50 border-slate-700 text-slate-500 hover:bg-slate-800"
+                                                : "bg-white border-gray-200 text-gray-400 hover:bg-gray-50")
+                                        }`}
+                                    >
+                                        <span className="text-sm font-medium">Capitalize</span>
+                                    </button>
+                                     <button
+                                        onClick={() => setIncludeNumber(!includeNumber)}
+                                        className={`p-4 rounded-xl border text-left transition-all sm:col-span-2 ${
+                                            includeNumber
+                                            ? (darkMode
+                                                ? "bg-indigo-500/10 border-indigo-500/50 text-indigo-300"
+                                                : "bg-indigo-50 border-indigo-200 text-indigo-700")
+                                            : (darkMode
+                                                ? "bg-slate-800/50 border-slate-700 text-slate-500 hover:bg-slate-800"
+                                                : "bg-white border-gray-200 text-gray-400 hover:bg-gray-50")
+                                        }`}
+                                    >
+                                        <span className="text-sm font-medium">Include Number</span>
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+
+                <div className="mt-8 flex justify-center">
+                    <button
+                        onClick={generatePassword}
+                        className={`w-full py-4 rounded-xl font-bold text-lg tracking-wide shadow-lg transition-transform active:scale-95 ${
+                            darkMode
+                            ? "bg-white text-slate-900 hover:bg-indigo-50"
+                            : "bg-slate-900 text-white hover:bg-slate-800"
+                        }`}
+                    >
+                        Generate Password
+                    </button>
+                </div>
+
+            </div>
+
+
+
         </div>
-      </div>
     </div>
   );
 }
